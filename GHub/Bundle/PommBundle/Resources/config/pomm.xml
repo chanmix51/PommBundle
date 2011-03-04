@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://www.symfony-project.org/schema/dic/services" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.symfony-project.org/schema/dic/services http://www.symfony-project.org/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="pomm.pomm_class">Pomm\Pomm</parameter>
+        <parameter key="pomm.connections" />
+    </parameters>
+
+    <services>
+        <service id="pomm" class="GHub\Bundle\PommBundle\Service\Service">
+            <argument>%pomm.pomm_class%</argument>
+            <argument>%pomm.connections%</argument>
+        </service>
+    </services>
+</container>
