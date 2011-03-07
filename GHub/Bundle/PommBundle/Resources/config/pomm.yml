@@ -1,0 +1,8 @@
+parameters:
+    pomm_class: Pomm\Pomm
+    connections: %pomm.connections%
+
+services:
+    pomm:
+        class: GHub\Bundle\PommBundle\Service\Service
+        arguments: [%pomm_class%, %connections%]
