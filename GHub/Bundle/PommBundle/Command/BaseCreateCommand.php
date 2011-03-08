@@ -23,6 +23,7 @@ abstract class BaseCreateCommand extends Command
             ->addOption('schema', null, InputOption::VALUE_REQUIRED, 'The schema name to scan for tables (default: "public")', 'public')
             ->addOption('path', null, InputOption::VALUE_REQUIRED, sprintf('The directory where the map files are generated (default "%s")', $dir))
             ->addOption('extends', null, InputOption::VALUE_REQUIRED, 'The classe the map file extends (default: "Pomm\Object\BaseObjectMap")', 'BaseObjectMap')
+            ->addOption('namespace', null, InputOption::VALUE_REQUIRED, 'The namespace of the generated map file (default: "Pomm\Model\Map")')
             ;
     }
 }
