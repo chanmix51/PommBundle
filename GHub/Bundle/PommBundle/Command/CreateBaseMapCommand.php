@@ -54,7 +54,6 @@ EOT
         );
     }
 
-
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $connection = !$input->hasOption('connection') ? $this->container->get('pomm')->getDatabase() : $this->container->get('pomm')->getDatabase($input->getOption('connection'));

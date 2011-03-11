@@ -10,6 +10,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\Output;
 
+use Pomm\Tools\ScanSchemaTool;
+
 class ScanSchemaCommand extends BaseCreateCommand
 {
     protected function configure()
@@ -30,7 +32,7 @@ If no connection name is provided, Pomm takes the first defined in your configur
 
 You can specify the Postgresql schema to scan tables into (default: public)
 
-  <info>app/console pomm:mapfile:scan --schema=production</info>
+  <info>app/console pomm:mapfile:scan --schema=pg_schema</info>
 
 By default, map files are generated in your cache directory. You can override 
 this behavior by providing a path:
@@ -48,5 +50,23 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $connection = !$input->hasOption('connection') ? $this->container->get('pomm')->getDatabase() : $this->container->get('pomm')->getDatabase($input->getOption('connection'));
+        $dir = $input->getOption('path') != '' ? $input->getOption('path') : $this->container->getParameter('kernel.root_dir').'/cache/Pomm/Model/Map';
+        $namespace = $input->getOption('namespace') != '' ? $input->getOption('namespace') : 'Pomm\Model\Map';
+
+        if (!is_dir($dir) and !mkdir($dir, 0777, true))
+        {
+            throw new \RunTimeException(sprintf("Could not create the directory '%s'. Please check the permissions on the disk.\n", $dir));
+        }
+
+        $tool = new ScanSchemaTool(array(
+            'dir'   => $dir, 
+            'connection'   => $connection,
+            'schema' => $input->getOption('schema'),
+            'extends' => $input->getOption('extends'),
+            'namespace' => $namespace,
+        ));
+
+        $tool->execute();
     }
 }
