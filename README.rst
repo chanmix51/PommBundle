@@ -81,8 +81,40 @@ The *default* here is a name for your database connection. You can define severa
             con2:
                 dsn: pgsql://user:password@host:port/dbname
 
-Exemples
+
+How to generate Map files
+-------------------------
+
+A Map file is the way for Pomm to know about your tables structures. Pomm can scan the database to generate these files for you.
+
+::
+    $ app/console pomm:mapfile:create my_table
+
+This will create a file *app/cache/Pomm/Model/Map/BaseMyTableMap.php* with the class *BaseMyTableMap* in the namespace *Pomm\\Model\\Map* extending Pomm\Object\BaseObjectMap that maps to the table *my_table* in the postgresql's schema *public*. You can of course override any of these settings using the command line options:
+
+::
+
+    $ app/console pomm:mapfile:create --connection=foo --path=other/dir --namespace="Other\\\\Namespace" --schema="other_schema" --extends="Other\\Parent" my_table
+
+Of course a 
+
+::
+
+    $ app/console help pomm:mapfile:create
+
+will help you :)
+
+Real life projects have dozens (sometimes hundreds) tables and it could be tiedous to generate map files one by one. Pomm has a command to scan Postgresql'schemas for tables and generate all the corresponding Map files.
+
+::
+
+    $ app/console pomm:mapfile:scan
+
+All previous options also apply for this command.
+
+Examples
 --------
+
 
 In your controllers, using the default connection (the first defined):
 
@@ -94,23 +126,41 @@ In your controllers, using the default connection (the first defined):
             ->getConnection()
             ->getMapFor('MyBundle\Model\Thing')
             ->findAll();
+
+            ...
     }
 
-Another exemple calling a custom model function from a connection named *foo*:
+You might want to filter things with some conditions:
 
 ::
 
-    public function myListThingAction()
+    public function listActiveAndRecentThingsAction()
+    {
+        $things = $this->get('pomm')
+            ->getConnection()
+            ->getMapFor('MyBundle\Model\Thing')
+            ->findWhere('active AND created_at > ?', array(strtotime('one month ago')));
+
+            ...
+    }
+
+Another example calling a custom model function from a connection named *foo*:
+
+::
+
+    public function myListStuffAction()
     {
         $stuff = $this->get('pomm')
             ->getConnection('foo')
             ->getMapFor('MyBundle\Model\Stuff')
             ->myModelMethod();
+
+            ...
     }
 
-==================
+******************
 Using transactions
-==================
+******************
 
 Let's say we want to change the karma of the author of a post on a blog and the karma of the comment author when a comment is added:
 
@@ -127,10 +177,10 @@ Let's say we want to change the karma of the author of a post on a blog and the 
 
         try {
             $tr->getMapFor('MyBundle\Model\Comment')
-                ->save($comment);
+                ->saveOne($comment);    // builtin method
 
             $tr->getMapFor('MyBundle\Model\CommentStatistic')
-                ->updateFor($comment);
+                ->updateFor($comment);  // custom method
 
         } catch (MyBundle\Model\Exception $e) {
             $tr->rollback();
@@ -147,20 +197,65 @@ Let's say we want to change the karma of the author of a post on a blog and the 
 
         try {
                 $tr->getMapFor('MyBundle\Model\Author)
-                ->addBlogAuthorKarmaForComment($blogAuthor, $comment);
+                    ->addBlogAuthorKarmaForComment($blogAuthor, $comment);
 
             $tr->getMapFor('MyBundle\Model\Author)
                 ->addCommentAuthorKarmaForComment($commentAuthor, $comment);
-            $message = "Your comment has been sent and your karma has been updated.";
+
+            $message = "Your comment has been saved and your karma has been updated.";
 
         } catch (MyBundle\Model\Exception $e) {
-            $tr->rollbackToSavepoint('comment');
-            $message = "Your comment has been sent but your karma cannot be changed with this action.";
+            $tr->rollback('comment');
+            $message = "Your comment has been saved but your karma cannot be changed with this action.";
         }
 
         $tr->commit();
 
         $this->redirect(@anotherAction);
     }
+
+******************
+In the model layer
+******************
+
+::
+
+    #MyBundle/Model/BlogPost.php
+
+    // Returns the most commented blog posts since $date
+    public function getMostActiveBlogPosts($date, $limit = 10)
+    {
+        $sql = sprintf(<<<SQLEND
+    SELECT
+        post.*,
+        COUNT(comment.id) AS comment_count
+    FROM
+        blog_post post
+            JOIN blog_comment comment ON post.id = comment.post_id
+    WHERE
+            post.active
+        AND
+            comment.created_at > ?
+    GROUP BY %s
+    HAVING comment_count > 0
+    ORDER BY comment_count DESC
+    LIMIT %d
+    SQLEND
+            , $this->getGroupByFields('post'), $limit);
+
+        return $this->query($sql, array($date));
+    }
+
+Accessing the comment count in twig template will be as easy as:
+
+::
+
+    <ul>
+    {{ for post in posts }}
+        <li>rank {% loop.index %} - {% post.title %} with {% post.getCommentCount %} comments posted last week.</li>
+    {{ endfor }}
+    </ul>
+
+**Important Note** on the query above. Only the date is passed as parameter and will be escaped by the database. The *$limit* parameter here is voluntarily hard coded in the query using sprintf and thus will **NOT** be escaped. Be aware of that if you want to ovoid SQL injection attacks.
 
 Send questions, notes, postcards, vacuum tubes to hubert DOT greg AT gmail DOT com.
