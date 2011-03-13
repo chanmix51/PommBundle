@@ -51,6 +51,13 @@ You have now to tell Symfony2 autoloader where to find the API and the files tha
         'GHub'                           => __DIR__.'/../src',
         'Pomm\Model\Map'                 => __DIR__.'/cache',
 
+Let's register the PommBundle in the application kernel:
+
+::
+
+    #app/AppKernel.php
+            // register your bundles
+            new GHub\Bundle\PommBundle\PommBundle(),
 
 You can now define your database settings in your main configuration file. The example below uses the yaml format:
 
@@ -74,4 +81,85 @@ The *default* here is a name for your database connection. You can define severa
             con2:
                 dsn: pgsql://user:password@host:port/dbname
 
+Exemples
+--------
 
+In your controllers, using the default connection (the first defined):
+
+::
+    public function listThingsAction()
+    {
+        $things = $this->get('pomm')
+            ->getConnection()
+            ->getMapFor('MyBundle\Model\Thing')
+            ->findAll();
+    }
+
+Another exemple calling a custom model function from a connection named *foo*:
+
+::
+
+    public function myListThingAction()
+    {
+        $stuff = $this->get('pomm')
+            ->getConnection('foo')
+            ->getMapFor('MyBundle\Model\Stuff')
+            ->myModelMethod();
+    }
+
+==================
+Using transactions
+==================
+
+Let's say we want to change the karma of the author of a post on a blog and the karma of the comment author when a comment is added:
+
+::
+
+    public function addCommentAction()
+    {
+        // ... get the $comment from a form here
+        // retreive $blogAuthor and $commentAuthor
+
+        $tr = $this->get('pomm')
+            ->getTransaction()
+            ->begin();
+
+        try {
+            $tr->getMapFor('MyBundle\Model\Comment')
+                ->save($comment);
+
+            $tr->getMapFor('MyBundle\Model\CommentStatistic')
+                ->updateFor($comment);
+
+        } catch (MyBundle\Model\Exception $e) {
+            $tr->rollback();
+
+            // note the transaction is over but you can use it
+            // as a normal connection.
+            $tr->getMapFor('MyBundle\Model\AdminTask')
+                ->haveALookAt($comment);
+
+            throw $e;
+        }
+
+        $tr->setSavePoint('comment');
+
+        try {
+                $tr->getMapFor('MyBundle\Model\Author)
+                ->addBlogAuthorKarmaForComment($blogAuthor, $comment);
+
+            $tr->getMapFor('MyBundle\Model\Author)
+                ->addCommentAuthorKarmaForComment($commentAuthor, $comment);
+            $message = "Your comment has been sent and your karma has been updated.";
+
+        } catch (MyBundle\Model\Exception $e) {
+            $tr->rollbackToSavepoint('comment');
+            $message = "Your comment has been sent but your karma cannot be changed with this action.";
+        }
+
+        $tr->commit();
+
+        $this->redirect(@anotherAction);
+    }
+
+Send questions, notes, postcards, vacuum tubes to hubert DOT greg AT gmail DOT com.
