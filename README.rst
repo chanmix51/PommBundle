@@ -88,6 +88,7 @@ How to generate Map files
 A Map file is the way for Pomm to know about your tables structures. Pomm can scan the database to generate these files for you.
 
 ::
+
     $ app/console pomm:mapfile:create my_table
 
 This will create a file *app/cache/Pomm/Model/Map/BaseMyTableMap.php* with the class *BaseMyTableMap* in the namespace *Pomm\\Model\\Map* extending Pomm\Object\BaseObjectMap that maps to the table *my_table* in the postgresql's schema *public*. You can of course override any of these settings using the command line options:
