@@ -87,6 +87,7 @@ Exemples
 In your controllers, using the default connection (the first defined):
 
 ::
+
     public function listThingsAction()
     {
         $things = $this->get('pomm')
