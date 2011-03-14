@@ -259,4 +259,33 @@ Accessing the comment count in twig template will be as easy as:
 
 **Important Note** on the query above. Only the date is passed as parameter and will be escaped by the database. The *$limit* parameter here is voluntarily hard coded in the query using sprintf and thus will **NOT** be escaped. Be aware of that if you want to ovoid SQL injection attacks.
 
+***************
+The Where class
+***************
+
+Sometimes, it may be useful to build dynamically the where clause of a query. The Where class has been written for that purpose: 
+
+::
+
+    public function selectPeople()
+    {
+        $where = Where::create("name ~ ?", array('^A'))
+            ->andWhere("age > ?", array('35')
+            ->orWhere('gender = ?', array('female'))
+            ;
+        // (name ~ '^A' AND age > 35) OR gender = 'female'
+
+        return $this->findWhere($where, $where->getValues());
+    }
+
+    public function cannonFodder()
+    {
+        $where = Where::create("gender = ?", array('male'))
+            ->andWhere(Where::create("age BETWEEN ? AND ?", array(18, 35))->orWhere("registration IS NOT NULL"))
+            ;
+        // gender = 'male' AND (age BETWEEN 18 AND 35 OR registration IS NOT NULL)
+
+        return $this->findWhere($where);
+    }
+
 Send questions, notes, postcards, vacuum tubes to hubert DOT greg AT gmail DOT com.
