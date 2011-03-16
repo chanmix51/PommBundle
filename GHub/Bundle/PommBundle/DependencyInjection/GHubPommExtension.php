@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
-class PommExtension extends Extension
+class GHubPommExtension extends Extension
 {
     /**
      * Loads the bundle configuration.
@@ -67,7 +67,7 @@ class PommExtension extends Extension
      */
     public function getAlias()
     {
-        return 'pomm';
+        return 'g_hub_pomm';
     }
 }
 
