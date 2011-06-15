@@ -1,6 +1,6 @@
 <?php
 
-namespace GHub\Bundle\PommBundle\DependencyInjection;
+namespace GHub\PommBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;

@@ -1,6 +1,6 @@
 <?php
 
-namespace GHub\Bundle\PommBundle\Command;
+namespace GHub\PommBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\Command;
 
@@ -22,7 +22,7 @@ class ScanSchemaCommand extends BaseCreateCommand
             ->setDescription('Scans and generates the map files from a database schema.')
             ->setHelp(<<<EOT
 The <info>pomm:mapfile:scan</info> command scans the tables in a database schema to generate the 
-Map files. They are created in the cache by default.
+Map files.
 
     <info>app/console pomm:mapfile:scan</info>
 
@@ -34,15 +34,23 @@ You can specify the Postgresql schema to scan tables into (default: public)
 
   <info>app/console pomm:mapfile:scan --schema=pg_schema</info>
 
-By default, map files are generated in your cache directory. You can override 
-this behavior by providing a path:
+By default, map files are generated in your Model directory tree with default's base to the project directory. You can override 
+this behavior by providing a prefix-path:
 
-  <info>app/console pomm:mapfile:scan --path=/my/directory</info>
+  <info>app/console pomm:mapfile:scan --prefix-path=/my/directory</info>
 
-The Map objects HAVE TO be instances of BaseObjectMap but you might want to 
-choose their basefiles to extend other classes that extend BaseObjectMap.
+The example above will generate all the files in /my/directory/Model/Pomm/Entity/SchemaName/Base.
 
-  <info>app/console pomm:mapfile:scan --extends="My\\\\Other\\\\Class"</info>
+The same apply with namespaces. By default the namespaces will be in the form Model\\Pomm\\Entity\\ShemaName\\Base but you can prefix this by your own prefix-namespace.
+
+  <info>app/console pomm:mapfile:scan --prefix-namespace=My\\Bundle\\Namespace</info>
+
+The classes will be then in the My\\Bundle\\Namespace\\Model\\Pomm\\Entity\\SchemaName\\Base.
+
+The Map objects HAVE TO be instances of Pomm\\Object\\BaseObjectMap but you might want to 
+choose their basefiles to extend other classes that extend Pomm\\Object\\BaseObjectMap.
+
+  <info>app/console pomm:mapfile:scan --extends="My\\Other\\Class"</info>
 EOT
         );
     }
@@ -50,22 +58,15 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $connection = !$input->hasOption('connection') ? $this->container->get('pomm')->getDatabase() : $this->container->get('pomm')->getDatabase($input->getOption('connection'));
-        $dir = $input->getOption('path') != '' ? $input->getOption('path') : $this->container->getParameter('kernel.root_dir').'/cache/Pomm/Model/Map';
-        $namespace = $input->getOption('namespace') != '' ? $input->getOption('namespace') : 'Pomm\Model\Map';
+        $options = array();
 
-        if (!is_dir($dir) and !mkdir($dir, 0777, true))
-        {
-            throw new \RunTimeException(sprintf("Could not create the directory '%s'. Please check the permissions on the disk.\n", $dir));
-        }
+        $options['connection'] = !$input->hasOption('connection') ? $this->container->get('pomm')->getDatabase() : $this->container->get('pomm')->getDatabase($input->getOption('connection'));
+        $options['prefix_dir'] = $input->getOption('prefix-path') != '' ? $input->getOption('prefix-path') : $this->container->getParameter('kernel.root_dir').'/..';
+        $options['prefix_namespace'] = $input->getOption('prefix-namespace');
+        $options['schema'] = $input->getOption('schema') != '' ? $input->getOption('schema') : 'public';
+        $options['extends'] = $input->getOption('extends') != '' ? $input->getOption('extends') : 'BaseObjectMap';
 
-        $tool = new ScanSchemaTool(array(
-            'dir'   => $dir, 
-            'connection'   => $connection,
-            'schema' => $input->getOption('schema'),
-            'extends' => $input->getOption('extends'),
-            'namespace' => $namespace,
-        ));
+        $tool = new ScanSchemaTool($options);
 
         $tool->execute();
     }

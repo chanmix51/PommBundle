@@ -1,6 +1,6 @@
 <?php
 
-namespace GHub\Bundle\PommBundle;
+namespace GHub\PommBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

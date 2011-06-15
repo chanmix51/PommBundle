@@ -1,6 +1,6 @@
 <?php
 
-namespace GHub\Bundle\PommBundle\Command;
+namespace GHub\PommBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\Command;
 
@@ -18,14 +18,14 @@ class CreateBaseMapCommand extends BaseCreateCommand
     {
         parent::configure();
 
-        $dir = sprintf('%s/app/cache/Pomm/Model/Map', '%kernel.root_dir%/app/cache/Pomm');
+        $dir = sprintf('%s/Model/Pomm/Entity/schema_name/Base', '%kernel.root_dir%');
 
         $this->setName('pomm:mapfile:create')
             ->setDescription('Generates the Map file from a given table.')
             ->addArgument('table', InputArgument::REQUIRED, 'The table name to generate the map file from')
             ->setHelp(<<<EOT
 The <info>pomm:mapfile:create</info> command generates a Map file from a given table 
-definition in the database. The map file is created in the cache under the <info>$dir/app/cache/pomm</info> directory.
+definition in the database. The map file is created in the model directory tree under the <info>$dir</info> directory.
 
     <info>app/console pomm:mapfile:create table_name</info>
 
@@ -33,46 +33,47 @@ If no connection name is provided, Pomm takes the first defined in your configur
 
   <info>app/console pomm:mapfile:create --connection=my_connection table_name</info>
 
-You can specify the Postgresql schema to scan tables into (default: public)
+You can specify the Postgresql schema to scan tables into (default: public). As the Schema plays the role of database namespace it is used in the Model directory tree under the Entity directory.
 
   <info>app/console pomm:mapfile:create --schema=production table_name</info>
 
-By default, map files are generated in your cache directory. You can override 
-this behavior by providing a path:
+By default, map files are generated in the main Model directory tree. You can override 
+this behavior by providing a prefix-path. This is useful if you want to manage a bundle based Model tree:
 
-  <info>app/console pomm:mapfile:create --path=/my/directory table_name</info>
+  <info>app/console pomm:mapfile:create --prefix-path=/my/directory table_name</info>
 
-The Map objects HAVE TO be instances of BaseObjectMap but you might want to 
-choose their basefiles to extend other classes that extend BaseObjectMap.
+This command line above will generate files in the directory /my/directory/Model/Pomm/Entity/Schema.
 
-  <info>app/console pomm:mapfile:create --extends="My\\\\Other\\\\Class" table_name</info>
+The Map objects HAVE TO be instances of Pomm\\Object\\BaseObjectMap but you might want to 
+choose their basefiles to extend other classes that extend Pomm\\Object\\BaseObjectMap.
 
-You can also enforce the namespace the class will be generated in. By default, the namespace is Pomm\\Model\\Map.
+  <info>app/console pomm:mapfile:create --extends="My\\Other\\Class" table_name</info>
 
-  <info>app/console pomm:mapfile:create --namespace="My\\\\Other\\\\Namespace" table_name</info>
+By default, the classes' namespace will be Model\\Pomm\\Entity\\Schema. It is possible to add a prefix to this namespace.
+
+  <info>app/console pomm:mapfile:create --prefix-namespace="My\\Other\\Namespace" table_name</info>
+
+This will result in model class belonging to namespace My\\Other\\Namespace\\Model\\Pomm\\Entity\\Schema.
 EOT
         );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $connection = !$input->hasOption('connection') ? $this->container->get('pomm')->getDatabase() : $this->container->get('pomm')->getDatabase($input->getOption('connection'));
-        $dir = $input->getOption('path') != '' ? $input->getOption('path') : $this->container->getParameter('kernel.root_dir').'/cache/Pomm/Model/Map';
-        $namespace = $input->getOption('namespace') != '' ? $input->getOption('namespace') : 'Pomm\Model\Map';
+        $options = array();
+        $options['connection'] = !$input->hasOption('connection') ? $this->container->get('pomm')->getDatabase() : $this->container->get('pomm')->getDatabase($input->getOption('connection'));
+        $options['prefix_dir'] = $input->getOption('prefix-path');
 
-        if (!is_dir($dir) and !mkdir($dir, 0777, true))
-        {
-            throw new \RunTimeException(sprintf("Could not create the directory '%s'. Please check the permissions on the disk.\n", $dir));
+        if ($input->getOption('prefix-namespace') != '') {
+            $options['prefix_namespace'] = $input->getOption('prefix-namespace');
         }
 
-        $tool = new CreateBaseMapTool(array(
-            'dir'   => $dir, 
-            'table' => $input->getArgument('table'),
-            'connection'   => $connection,
-            'schema' => $input->getOption('schema'),
-            'extends' => $input->getOption('extends'),
-            'namespace' => $namespace,
-        ));
+        $options['prefix_dir'] = $input->getOption('prefix-path') == '' ? $this->container->getParameter('kernel.root_dir').'/..' : $input->getOption('prefix-path');
+        $options['table'] = $input->getArgument('table');
+        $options['schema'] = $input->getOption('schema') != '' ? $input->getOption('schema') : 'public';
+        $options['extends'] = $input->getOption('extends') != '' ? $input->getOption('extends') : 'BaseObjectMap';
+
+        $tool = new CreateBaseMapTool($options);
 
         $tool->execute();
     }
