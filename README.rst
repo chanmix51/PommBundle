@@ -5,7 +5,7 @@ PommBundle a new O(R)M for Symfony2
 What is Pomm ?
 --------------
 
-Pomm stands for **Postgresql Object Model Manager**. It turns an existing Postgresql database to collection of coherent objects through an *Object Mapping* (OM). Pomm makes you use SQL to query the database and take advantage of the RDBMS features. 
+Pomm stands for **Postgresql/PHP Object Model Manager**. It turns an existing Postgresql database to collection of coherent objects through an *Object Mapping* (OM). Pomm makes you use SQL to query the database and take advantage of the RDBMS features. 
 
 **Pomm is really Fast**
     Pomm is a layer built on top of PDO and that's it. There is no database abstraction layer to slow down your processes: no query parser, the results are simply fed into your structures. By placing in the database processes that never change you greatly increase the performances of your website.
@@ -31,15 +31,15 @@ To use PommBundle, you must clone the bundle_ in the *src* directory of your sf2
 
   $ git clone https://github.com/chanmix51/Pomm vendor/pomm
   ...
-  $ git clone https://github.com/chanmix51/PommBundle src
+  $ git clone https://github.com/chanmix51/PommBundle vendor/bundles/GHub
 
 You might prefer `downloading an archive`__ of the Pomm bundle. Simply unzip it in your *src* directory.
 
-.. __: https://github.com/chanmix51/PommBundle/zipball/master
+.. __: http://pomm.coolkeums.org/downloads/PommBundle.latest.tar.gz
 
 ::
 
-    src$ unzip ~/Downloads/chanmix51-PommBundle-4f2ed43.zip
+    src$ cd src/bundles && tar xzf ~/Downloads/PommBundle.latest.tar.gz
 
 You have now to tell Symfony2 autoloader where to find the API and the files that will be generated. Fire up your text editor and add the following lines to the *app/autoload.php* file:
 
@@ -48,8 +48,10 @@ You have now to tell Symfony2 autoloader where to find the API and the files tha
     #app/autoload.php
 
         'Pomm'                           => __DIR__.'/../vendor/pomm',
-        'GHub'                           => __DIR__.'/../src',
-        'Pomm\Model\Map'                 => __DIR__.'/cache',
+        'GHub'                           => __DIR__.'/../vendor/bundles',
+    # This is the default namespace for the model
+    # But it can be changed see the command line tools
+        'Model'                          => __DIR__.'/..',
 
 Let's register the PommBundle in the application kernel:
 
@@ -57,19 +59,19 @@ Let's register the PommBundle in the application kernel:
 
     #app/AppKernel.php
             // register your bundles
-            new GHub\Bundle\PommBundle\PommBundle(),
+            new GHub\PommBundle\GHubPommBundle(),
 
 You can now define your database settings in your main configuration file. The example below uses the yaml format:
 
 ::
 
     # app/config/config.yml
-    pomm:
+    g_hub_pomm:
         connections:
-            default:
+            cnct_name:
                 dsn: pgsql://user:password@host:port/dbname
 
-The *default* here is a name for your database connection. You can define several databases connections using different names on different databases, users etc...
+The *cnct_name* here is a name for your database connection. You can define several databases connections using different names on different databases, users etc...
 
 ::
 
@@ -77,9 +79,11 @@ The *default* here is a name for your database connection. You can define severa
     pomm:
         connections:
             con1:
-                dsn: pgsql://user:password@host:port/dbname
+                dsn:       pgsql://user:password@host:port/dbname
             con2:
-                dsn: pgsql://user:password@host:port/dbname
+                dsn:       pgsql://user:password@host:port/dbname
+                class:     My/Database    # default: Pomm\Connection\Database
+                isolation: SERIALIZABLE
 
 
 How to generate Map files
@@ -91,11 +95,13 @@ A Map file is the way for Pomm to know about your tables structures. Pomm can sc
 
     $ app/console pomm:mapfile:create my_table
 
-This will create a file *app/cache/Pomm/Model/Map/BaseMyTableMap.php* with the class *BaseMyTableMap* in the namespace *Pomm\\Model\\Map* extending Pomm\Object\BaseObjectMap that maps to the table *my_table* in the postgresql's schema *public*. You can of course override any of these settings using the command line options:
+This will create a file *Model/Pomm/Entity/Public/Base/MyTableMap.php* with the class *MyTableMap* in the namespace *Model\\Pomm\\Entity\\Public\\Base* extending Pomm\\Object\\BaseObjectMap that maps to the table *my_table* in the postgresql's schema *public*. You can of course override any of these settings using the command line options:
 
 ::
 
-    $ app/console pomm:mapfile:create --connection=foo --path=other/dir --namespace="Other\\\\Namespace" --schema="other_schema" --extends="Other\\Parent" my_table
+    $ app/console pomm:mapfile:create --connection=foo --prefix-path=other/dir --prefix-namespace="Other\Namespace" --schema="other_schema" --extends="Other\\Parent" my_table
+
+This will create a *other/dir/Model/Pomm/Entity/OtherSchema/Base/MyTableMap.php* file owning the *Other\\Namespace\\Model\\Pomm\\Entity\\OtherSchema\\Base\\MyTableMap* class from the postgres table *other_schema.my_table* according to the connection defined as *foo* in the configuration. This can be useful if you want to store the model files in your bundles instead having them in the project directory. 
 
 Of course a 
 
@@ -125,7 +131,7 @@ In your controllers, using the default connection (the first defined):
     {
         $things = $this->get('pomm')
             ->getConnection()
-            ->getMapFor('MyBundle\Model\Thing')
+            ->getMapFor('Model\Pomm\Entity\NssBlog\Article')
             ->findAll();
 
             ...
@@ -139,7 +145,7 @@ You might want to filter things with some conditions:
     {
         $things = $this->get('pomm')
             ->getConnection()
-            ->getMapFor('MyBundle\Model\Thing')
+            ->getMapFor('Model\Pomm\Entity\NssBlog\Article')
             ->findWhere('active AND created_at > ?', array(strtotime('one month ago')));
 
             ...
@@ -153,139 +159,17 @@ Another example calling a custom model function from a connection named *foo*:
     {
         $stuff = $this->get('pomm')
             ->getConnection('foo')
-            ->getMapFor('MyBundle\Model\Stuff')
+            ->getMapFor('Model\Pomm\Entity\AdminUser\Group')
             ->myModelMethod();
 
             ...
     }
 
-******************
-Using transactions
-******************
 
-Let's say we want to change the karma of the author of a post on a blog and the karma of the comment author when a comment is added:
+Pomm also make you benefit from Postgresql's nice transaction mechanism, see the `Pomm's online documentation`_.
 
-::
+ .. _Pomm's online documentation : http://pomm.coolkeums.org/documentation
 
-    public function addCommentAction()
-    {
-        // ... get the $comment from a form here
-        // retreive $blogAuthor and $commentAuthor
 
-        $tr = $this->get('pomm')
-            ->getTransaction()
-            ->begin();
 
-        try {
-            $tr->getMapFor('MyBundle\Model\Comment')
-                ->saveOne($comment);    // builtin method
 
-            $tr->getMapFor('MyBundle\Model\CommentStatistic')
-                ->updateFor($comment);  // custom method
-
-        } catch (MyBundle\Model\Exception $e) {
-            $tr->rollback();
-
-            // note the transaction is over but you can use it
-            // as a normal connection.
-            $tr->getMapFor('MyBundle\Model\AdminTask')
-                ->haveALookAt($comment);
-
-            throw $e;
-        }
-
-        $tr->setSavePoint('comment');
-
-        try {
-                $tr->getMapFor('MyBundle\Model\Author)
-                    ->addBlogAuthorKarmaForComment($blogAuthor, $comment);
-
-            $tr->getMapFor('MyBundle\Model\Author)
-                ->addCommentAuthorKarmaForComment($commentAuthor, $comment);
-
-            $message = "Your comment has been saved and your karma has been updated.";
-
-        } catch (MyBundle\Model\Exception $e) {
-            $tr->rollback('comment');
-            $message = "Your comment has been saved but your karma cannot be changed with this action.";
-        }
-
-        $tr->commit();
-
-        $this->redirect(@anotherAction);
-    }
-
-******************
-In the model layer
-******************
-
-::
-
-    #MyBundle/Model/BlogPost.php
-
-    // Returns the most commented blog posts since $date
-    public function getMostActiveBlogPosts($date, $limit = 10)
-    {
-        $sql = sprintf(<<<SQLEND
-    SELECT
-        post.*,
-        COUNT(comment.id) AS comment_count
-    FROM
-        blog_post post
-            JOIN blog_comment comment ON post.id = comment.post_id
-    WHERE
-            post.active
-        AND
-            comment.created_at > ?
-    GROUP BY %s
-    HAVING comment_count > 0
-    ORDER BY comment_count DESC
-    LIMIT %d
-    SQLEND
-            , $this->getGroupByFields('post'), $limit);
-
-        return $this->query($sql, array($date));
-    }
-
-Accessing the comment count in twig template will be as easy as:
-
-::
-
-    <ul>
-    {{ for post in posts }}
-        <li>rank {% loop.index %} - {% post.title %} with {% post.getCommentCount %} comments posted last week.</li>
-    {{ endfor }}
-    </ul>
-
-**Important Note** on the query above. Only the date is passed as parameter and will be escaped by the database. The *$limit* parameter here is voluntarily hard coded in the query using sprintf and thus will **NOT** be escaped. Be aware of that if you want to ovoid SQL injection attacks.
-
-***************
-The Where class
-***************
-
-Sometimes, it may be useful to build dynamically the where clause of a query. The Where class has been written for that purpose: 
-
-::
-
-    public function selectPeople()
-    {
-        $where = Where::create("name ~ ?", array('^A'))
-            ->andWhere("age > ?", array('35')
-            ->orWhere('gender = ?', array('female'))
-            ;
-        // (name ~ '^A' AND age > 35) OR gender = 'female'
-
-        return $this->findWhere($where, $where->getValues());
-    }
-
-    public function cannonFodder()
-    {
-        $where = Where::create("gender = ?", array('male'))
-            ->andWhere(Where::create("age BETWEEN ? AND ?", array(18, 35))->orWhere("registration IS NOT NULL"))
-            ;
-        // gender = 'male' AND (age BETWEEN 18 AND 35 OR registration IS NOT NULL)
-
-        return $this->findWhere($where);
-    }
-
-Send questions, notes, postcards, vacuum tubes to hubert DOT greg AT gmail DOT com.
