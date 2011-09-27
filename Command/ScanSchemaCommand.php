@@ -60,8 +60,8 @@ EOT
     {
         $options = array();
 
-        $options['connection'] = !$input->hasOption('connection') ? $this->container->get('pomm')->getDatabase() : $this->container->get('pomm')->getDatabase($input->getOption('connection'));
-        $options['prefix_dir'] = $input->getOption('prefix-path') != '' ? $input->getOption('prefix-path') : $this->container->getParameter('kernel.root_dir').'/..';
+        $options['connection'] = !$input->hasOption('connection') ? $this->getContainer()->get('pomm')->getDatabase() : $this->getContainer()->get('pomm')->getDatabase($input->getOption('connection'));
+        $options['prefix_dir'] = $input->getOption('prefix-path') != '' ? $input->getOption('prefix-path') : $this->getContainer()->getParameter('kernel.root_dir').'/..';
         $options['prefix_namespace'] = $input->getOption('prefix-namespace');
         $options['schema'] = $input->getOption('schema') != '' ? $input->getOption('schema') : 'public';
         $options['extends'] = $input->getOption('extends') != '' ? $input->getOption('extends') : 'BaseObjectMap';
