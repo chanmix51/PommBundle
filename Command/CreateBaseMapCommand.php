@@ -61,14 +61,14 @@ EOT
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $options = array();
-        $options['connection'] = !$input->hasOption('connection') ? $this->container->get('pomm')->getDatabase() : $this->container->get('pomm')->getDatabase($input->getOption('connection'));
+        $options['connection'] = !$input->hasOption('connection') ? $this->getContainer()->get('pomm')->getDatabase() : $this->getContainer()->get('pomm')->getDatabase($input->getOption('connection'));
         $options['prefix_dir'] = $input->getOption('prefix-path');
 
         if ($input->getOption('prefix-namespace') != '') {
             $options['prefix_namespace'] = $input->getOption('prefix-namespace');
         }
 
-        $options['prefix_dir'] = $input->getOption('prefix-path') == '' ? $this->container->getParameter('kernel.root_dir').'/..' : $input->getOption('prefix-path');
+        $options['prefix_dir'] = $input->getOption('prefix-path') == '' ? $this->getContainer()->getParameter('kernel.root_dir').'/..' : $input->getOption('prefix-path');
         $options['table'] = $input->getArgument('table');
         $options['schema'] = $input->getOption('schema') != '' ? $input->getOption('schema') : 'public';
         $options['extends'] = $input->getOption('extends') != '' ? $input->getOption('extends') : 'BaseObjectMap';
