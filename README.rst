@@ -96,13 +96,19 @@ You can define global converter definitions for all databases, and/or per databa
     #app/config/config.yml
     pomm:
         converters:
-           year: My\Pomm\Converter\Year
-           month: My\Pomm\Converter\Month
+            year: 
+                class: My\Pomm\Converter\Year
+                types: [year]
+            month: 
+                class: My\Pomm\Converter\Month
+                types: [month]
         databases:
             con1:
                 dsn:       pgsql://user:password@host:port/dbname
                 converters:
-                   day: My\Pomm\Converter\Day
+                    day: 
+                        class: My\Pomm\Converter\Day
+                        types: [day]
             con2:
                 dsn:       pgsql://user:password@host:port/dbname
                 class:     My/Database    # default: Pomm\Connection\Database
