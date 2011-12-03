@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 class GHubPommExtension implements ExtensionInterface
 {
@@ -16,19 +19,25 @@ class GHubPommExtension implements ExtensionInterface
      * @param array $config    An array of configuration settings
      * @param ContainerBuilder $container A ContainerBuilder instance
      */
-    public function load(array $config, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('pomm')) {
-            $this->loadDefaults($container);
+        $processor = new Processor();
+        $configuration = new Configuration();
+        $config = $processor->processConfiguration($configuration, $configs);
+
+        $this->loadDefaults($container);
+
+        foreach ($config['databases'] as $name => $parameters) {
+            $id = sprintf('pomm.%s_database', $name);
+            $databaseDefinition = $container->setDefinition(
+                $id,
+                new Definition($parameters['class'], array($parameters))
+            );
+            foreach ($parameters['converters'] as $type => $converterClass) {
+                $databaseDefinition->addMethodCall('registerConverter', array($type, new Definition($converterClass)));
+            }
+            $container->getDefinition('pomm')->addMethodCall('setDatabase', array($name, new Reference($id)));
         }
-
-        $configuration = $config[0];
-
-        if (!array_key_exists('connections', $configuration) or !is_array($configuration['connections'])) {
-            throw new InvalidArgumentException("Inexistant or invalid connections definition");
-        }
-
-        $container->setParameter('pomm.connections', $configuration['connections']);
     }
 
     /**
