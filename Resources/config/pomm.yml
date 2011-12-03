@@ -1,7 +1,3 @@
-parameters:
-    connections: %pomm.connections%
-
 services:
     pomm:
         class: Pomm\Service
-        arguments: [%connections%]
