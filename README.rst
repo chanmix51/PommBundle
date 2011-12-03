@@ -67,7 +67,7 @@ You can now define your database settings in your main configuration file. The e
 
     # app/config/config.yml
     g_hub_pomm:
-        connections:
+        databases:
             cnct_name:
                 dsn: pgsql://user:password@host:port/dbname
 
@@ -77,7 +77,7 @@ The *cnct_name* here is a name for your database connection. You can define seve
 
     #app/config/config.yml
     pomm:
-        connections:
+        databases:
             con1:
                 dsn:       pgsql://user:password@host:port/dbname
             con2:
@@ -85,6 +85,31 @@ The *cnct_name* here is a name for your database connection. You can define seve
                 class:     My/Database    # default: Pomm\Connection\Database
                 isolation: SERIALIZABLE
 
+
+How to register converters
+--------------------------
+
+You can define global converter definitions for all databases, and/or per database:
+
+::
+
+    #app/config/config.yml
+    pomm:
+        converters:
+           year: My\Pomm\Converter\Year
+           month: My\Pomm\Converter\Month
+        databases:
+            con1:
+                dsn:       pgsql://user:password@host:port/dbname
+                converters:
+                   day: My\Pomm\Converter\Day
+            con2:
+                dsn:       pgsql://user:password@host:port/dbname
+                class:     My/Database    # default: Pomm\Connection\Database
+                isolation: SERIALIZABLE
+
+The con1 database will have the year, month and day converters.
+The con2 database will have the year and month converters.
 
 How to generate Map files
 -------------------------
