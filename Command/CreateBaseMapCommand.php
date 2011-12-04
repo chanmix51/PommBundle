@@ -29,9 +29,9 @@ definition in the database. The map file is created in the model directory tree 
 
     <info>app/console pomm:mapfile:create table_name</info>
 
-If no connection name is provided, Pomm takes the first defined in your configuration.
+If no database name is provided, Pomm takes the first defined in your configuration.
 
-  <info>app/console pomm:mapfile:create --connection=my_connection table_name</info>
+  <info>app/console pomm:mapfile:create --database=my_database table_name</info>
 
 You can specify the Postgresql schema to scan tables into (default: public). As the Schema plays the role of database namespace it is used in the Model directory tree under the Entity directory.
 

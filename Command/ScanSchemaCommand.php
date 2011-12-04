@@ -26,9 +26,9 @@ Map files.
 
     <info>app/console pomm:mapfile:scan</info>
 
-If no connection name is provided, Pomm takes the first defined in your configuration.
+If no database name is provided, Pomm takes the first defined in your configuration.
 
-  <info>app/console pomm:mapfile:scan --connection=my_connection</info>
+  <info>app/console pomm:mapfile:scan --database=my_database</info>
 
 You can specify the Postgresql schema to scan tables into (default: public)
 

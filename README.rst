@@ -71,7 +71,7 @@ You can now define your database settings in your main configuration file. The e
             cnct_name:
                 dsn: pgsql://user:password@host:port/dbname
 
-The *cnct_name* here is a name for your database connection. You can define several databases connections using different names on different databases, users etc...
+The *cnct_name* here is a name for your database. You can define several databases using different dsn or options.
 
 ::
 
@@ -84,7 +84,6 @@ The *cnct_name* here is a name for your database connection. You can define seve
                 dsn:       pgsql://user:password@host:port/dbname
                 class:     My/Database    # default: Pomm\Connection\Database
                 isolation: SERIALIZABLE
-
 
 How to register converters
 --------------------------
@@ -130,9 +129,9 @@ This will create a file *Model/Pomm/Entity/Public/Base/MyTableMap.php* with the 
 
 ::
 
-    $ app/console pomm:mapfile:create --connection=foo --prefix-path=other/dir --prefix-namespace="Other\Namespace" --schema="other_schema" --extends="Other\\Parent" my_table
+    $ app/console pomm:mapfile:create --database=foo --prefix-path=other/dir --prefix-namespace="Other\Namespace" --schema="other_schema" --extends="Other\\Parent" my_table
 
-This will create a *other/dir/Model/Pomm/Entity/OtherSchema/Base/MyTableMap.php* file owning the *Other\\Namespace\\Model\\Pomm\\Entity\\OtherSchema\\Base\\MyTableMap* class from the postgres table *other_schema.my_table* according to the connection defined as *foo* in the configuration. This can be useful if you want to store the model files in your bundles instead having them in the project directory. 
+This will create a *other/dir/Model/Pomm/Entity/OtherSchema/Base/MyTableMap.php* file owning the *Other\\Namespace\\Model\\Pomm\\Entity\\OtherSchema\\Base\\MyTableMap* class from the postgres table *other_schema.my_table* according to the database defined as *foo* in the configuration. This can be useful if you want to store the model files in your bundles instead having them in the project directory. 
 
 Of course a 
 
@@ -154,14 +153,15 @@ Examples
 --------
 
 
-In your controllers, using the default connection (the first defined):
+In your controllers, using the default database (the first defined):
 
 ::
 
     public function listThingsAction()
     {
         $things = $this->get('pomm')
-            ->getConnection()
+            ->getDatabase()
+            ->createConnection()
             ->getMapFor('Model\Pomm\Entity\NssBlog\Article')
             ->findAll();
 
@@ -175,21 +175,23 @@ You might want to filter things with some conditions:
     public function listActiveAndRecentThingsAction()
     {
         $things = $this->get('pomm')
-            ->getConnection()
+            ->getDatabase()
+            ->createConnection()
             ->getMapFor('Model\Pomm\Entity\NssBlog\Article')
             ->findWhere('active AND created_at > ?', array(strtotime('one month ago')));
 
             ...
     }
 
-Another example calling a custom model function from a connection named *foo*:
+Another example calling a custom model function from a database named *foo*:
 
 ::
 
     public function myListStuffAction()
     {
         $stuff = $this->get('pomm')
-            ->getConnection('foo')
+            ->getDatabase('foo')
+            ->createConnection()
             ->getMapFor('Model\Pomm\Entity\AdminUser\Group')
             ->myModelMethod();
 

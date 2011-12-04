@@ -17,7 +17,7 @@ abstract class BaseCreateCommand extends ContainerAwareCommand
         parent::configure();
 
         $this
-            ->addOption('connection', null, InputOption::VALUE_REQUIRED, 'The name of the connection to use (default: the first one)')
+            ->addOption('database', null, InputOption::VALUE_REQUIRED, 'The name of the database to use (default: the first one)')
             ->addOption('schema', null, InputOption::VALUE_REQUIRED, 'The schema name to scan for tables', 'public')
             ->addOption('prefix-path', null, InputOption::VALUE_REQUIRED, 'The directory where the Model tree is located', '')
             ->addOption('extends', null, InputOption::VALUE_OPTIONAL, 'The classe the map file extends (default: "Pomm\Object\BaseObjectMap")')
@@ -29,7 +29,7 @@ abstract class BaseCreateCommand extends ContainerAwareCommand
     {
         $options = array();
 
-        $options['connection'] = !$input->hasOption('connection') ? $this->getContainer()->get('pomm')->getDatabase() : $this->getContainer()->get('pomm')->getDatabase($input->getOption('connection'));
+        $options['database'] = !$input->hasOption('database') ? $this->getContainer()->get('pomm')->getDatabase() : $this->getContainer()->get('pomm')->getDatabase($input->getOption('database'));
         $options['prefix_dir'] = $input->getOption('prefix-path');
 
         if ($input->getOption('prefix-namespace') != '') {
