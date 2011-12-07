@@ -33,7 +33,7 @@ abstract class BaseCreateCommand extends ContainerAwareCommand
         $options['prefix_dir'] = $input->getOption('prefix-path');
 
         if ($input->getOption('prefix-namespace') != '') {
-            $options['prefix_namespace'] = $input->getOption('prefix-namespace');
+            $options['namespace'] = $input->getOption('prefix-namespace');
         }
 
         $options['prefix_dir'] = $input->getOption('prefix-path') == '' ? $this->getContainer()->getParameter('kernel.root_dir').'/..' : $input->getOption('prefix-path');
