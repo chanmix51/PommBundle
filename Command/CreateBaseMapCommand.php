@@ -18,7 +18,7 @@ class CreateBaseMapCommand extends BaseCreateCommand
     {
         parent::configure();
 
-        $dir = sprintf('%s/Model/Pomm/Entity/schema_name/Base', '%kernel.root_dir%');
+        $dir = sprintf('%s/database_name/schema_name/Base', '%kernel.root_dir%');
 
         $this->setName('pomm:mapfile:create')
             ->setDescription('Generates the Map file from a given table.')
@@ -33,16 +33,16 @@ If no database name is provided, Pomm takes the first defined in your configurat
 
   <info>app/console pomm:mapfile:create --database=my_database table_name</info>
 
-You can specify the Postgresql schema to scan tables into (default: public). As the Schema plays the role of database namespace it is used in the Model directory tree under the Entity directory.
+You can specify the Postgresql schema to scan tables into (default: public). As the Schema plays the role of database namespace, generated class will use the same namespace name as the schema.
 
   <info>app/console pomm:mapfile:create --schema=production table_name</info>
 
-By default, map files are generated in the main Model directory tree. You can override
-this behavior by providing a prefix-path. This is useful if you want to manage a bundle based Model tree:
+By default, map files are generated in the schema directory tree. You can override
+this behavior by providing a prefix-path. This is useful if you want to manage a bundle based model tree:
 
   <info>app/console pomm:mapfile:create --prefix-path=/my/directory table_name</info>
 
-This command line above will generate files in the directory /my/directory/Schema.
+This command line above will generate files in the directory /my/directory/DatabaseName/SchemaName.
 
 The Map objects HAVE TO be instances of Pomm\\Object\\BaseObjectMap but you might want to
 choose their basefiles to extend other classes that extend Pomm\\Object\\BaseObjectMap.
@@ -53,7 +53,7 @@ By default, the classes' namespace will be Schema. It is possible to add a prefi
 
   <info>app/console pomm:mapfile:create --prefix-namespace="My\\Other\\Namespace" table_name</info>
 
-This will result in model class belonging to namespace My\\Other\\Namespace\\Schema.
+This will result in model class belonging to namespace My\\Other\\Namespace\\Database\\Schema.
 EOT
         );
     }

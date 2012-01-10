@@ -1,5 +1,5 @@
 ===================================
-PommBundle a new O(R)M for Symfony2
+PommBundle a non ORM for Symfony2
 ===================================
 
 What is Pomm ?
@@ -11,13 +11,10 @@ Pomm stands for **Postgresql/PHP Object Model Manager**. It turns an existing Po
     Pomm is a layer built on top of PDO and that's it. There is no database abstraction layer to slow down your processes: no query parser, the results are simply fed into your structures. By placing in the database processes that never change you greatly increase the performances of your website.
 
 **Pomm is Powerful**
-    Pomm it not powerful in itself, it lets you take advantage from the great features of Postgresql (functions, transactions, extra types, table inheritance ... ). Because it does not use an abstraction layer, you can write queries that do the job the most efficient way. Pomm also also benefits from Symfony2 features and PHP5.3 namespaces. 
+    Pomm makes you able to take advantage from the great features of Postgresql (functions, transactions, extra types, table inheritance ... ). Because it does not use an abstraction layer, you can write queries that do the job the most efficient way. Pomm also also benefits from Symfony2 features and PHP5.3 namespaces. 
 
 **Pomm is Efficient**
     Unlike Propel or Doctrine, Pomm does not rely on a schema. It scans the database to generate the PHP structures it needs. This lets you use the specialized and powerful tools that exist for postgresql to design, migrate, save and deploy databases. From a code point of view, you do not have to learn a new language, the query language is pure Postgres'SQL. 
-
-**Pomm is in Beta state**
-    Pomm is still in development and should not be used in production. I encourage its use, do not hesitate to send me feedbacks and bugs.
 
 Installation and setup
 ----------------------
