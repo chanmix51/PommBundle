@@ -1,5 +1,5 @@
 parameters:
-    pomm.logger.class: Pomm\Logger
+    pomm.logger.class: GHub\PommBundle\Logger
     data_collector.pomm.class: GHub\PommBundle\DataCollector\PommDataCollector
 
 services:
@@ -8,6 +8,7 @@ services:
 
     pomm.logger:
         class: %pomm.logger.class%
+        arguments: [@debug.stopwatch]
 
     data_collector.pomm:
         class: %data_collector.pomm.class%
