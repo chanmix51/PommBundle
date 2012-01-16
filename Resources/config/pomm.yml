@@ -1,3 +1,20 @@
+parameters:
+    pomm.logger.class: Pomm\Logger
+    data_collector.pomm.class: GHub\PommBundle\DataCollector\PommDataCollector
+
 services:
     pomm:
         class: Pomm\Service
+
+    pomm.logger:
+        class: %pomm.logger.class%
+
+    data_collector.pomm:
+        class: %data_collector.pomm.class%
+        public: false
+        arguments: [@pomm.logger]
+        tags:
+            -
+                name: data_collector
+                id: db
+                template: "GHubPommBundle:Collector:db"
