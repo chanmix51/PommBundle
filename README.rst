@@ -38,6 +38,18 @@ You might prefer `downloading an archive`__ of the Pomm bundle. Simply unzip it 
 
     src$ cd src/bundles && tar xzf ~/Downloads/PommBundle.latest.tar.gz
 
+If you are using the deps file to manage your project's dependencies, you must add the following lines to it:
+
+::
+
+  [Pomm]
+    git=https://github.com/chanmix51/Pomm.git
+    target=/pomm
+  
+  [GHubPommBundle]
+    git=https://github.com/chanmix51/PommBundle.git
+    target=/bundles/GHub/PommBundle
+
 You have now to tell Symfony2 autoloader where to find the API and the files that will be generated. Fire up your text editor and add the following lines to the *app/autoload.php* file:
 
 ::
