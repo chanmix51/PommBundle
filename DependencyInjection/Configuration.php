@@ -42,7 +42,7 @@ class Configuration implements ConfigurationInterface
                         ->children()
                             ->scalarNode('dsn')->isRequired()->end()
                             ->scalarNode('class')->defaultValue('Pomm\Connection\Database')->end()
-                            ->scalarNode('isolation')->defaultNull()->end()
+                            ->scalarNode('isolation')->end()
                             ->arrayNode('converters')
                                 ->useAttributeAsKey('key')
                                 ->prototype('array')
