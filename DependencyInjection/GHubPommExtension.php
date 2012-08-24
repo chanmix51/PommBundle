@@ -31,7 +31,7 @@ class GHubPommExtension implements ExtensionInterface
             $id = sprintf('pomm.%s_database', $name);
             $databaseDefinition = $container->setDefinition(
                 $id,
-                new Definition($parameters['class'], array($parameters))
+                new Definition($parameters['class'], array($parameters, new Reference('pomm.logger')))
             );
             foreach ($parameters['converters'] as $type => $converter) {
                 $converterDefinition = new Definition($converter['class']);
