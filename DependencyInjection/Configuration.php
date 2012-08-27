@@ -1,6 +1,6 @@
 <?php
 
-namespace GHub\PommBundle\DependencyInjection;
+namespace Pomm\PommBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder,
     Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('g_hub_pomm');
+        $rootNode = $treeBuilder->root('pomm');
 
         $rootNode
             ->beforeNormalization()
