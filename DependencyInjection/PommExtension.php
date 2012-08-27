@@ -1,6 +1,6 @@
 <?php
 
-namespace GHub\PommBundle\DependencyInjection;
+namespace Pomm\PommBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -11,7 +11,7 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class GHubPommExtension implements ExtensionInterface
+class PommExtension implements ExtensionInterface
 {
     /**
      * Loads the bundle configuration.
@@ -77,7 +77,7 @@ class GHubPommExtension implements ExtensionInterface
      */
     public function getAlias()
     {
-        return 'g_hub_pomm';
+        return 'pomm';
     }
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace GHub\PommBundle\Command;
+namespace Pomm\PommBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\Command;
 
