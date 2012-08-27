@@ -28,7 +28,7 @@ To use PommBundle, you must clone the bundle_ in the *src* directory of your sf2
 
   $ git clone https://github.com/chanmix51/Pomm vendor/pomm
   ...
-  $ git clone https://github.com/chanmix51/PommBundle vendor/bundles/GHub
+  $ git clone https://github.com/chanmix51/PommBundle vendor/bundles/Pomm
 
 You might prefer `downloading an archive`__ of the Pomm bundle. Simply unzip it in your *src* directory.
 
@@ -46,9 +46,9 @@ If you are using the deps file to manage your project's dependencies, you must a
     git=https://github.com/chanmix51/Pomm.git
     target=/pomm
   
-  [GHubPommBundle]
+  [PommPommBundle]
     git=https://github.com/chanmix51/PommBundle.git
-    target=/bundles/GHub/PommBundle
+    target=/bundles/Pomm/PommBundle
 
 You have now to tell Symfony2 autoloader where to find the API and the files that will be generated. Fire up your text editor and add the following lines to the *app/autoload.php* file:
 
@@ -56,8 +56,8 @@ You have now to tell Symfony2 autoloader where to find the API and the files tha
 
     #app/autoload.php
 
+        'Pomm/PommBundle'                => __DIR__.'/../vendor/bundles/Pomm',
         'Pomm'                           => __DIR__.'/../vendor/pomm',
-        'GHub'                           => __DIR__.'/../vendor/bundles',
     # This is the default namespace for the model
     # But it can be changed see the command line tools
         'Model'                          => __DIR__.'/..',
@@ -68,14 +68,14 @@ Let's register the PommBundle in the application kernel:
 
     #app/AppKernel.php
             // register your bundles
-            new GHub\PommBundle\GHubPommBundle(),
+            new Pomm\PommBundle\PommBundle(),
 
 You can now define your database settings in your main configuration file. The example below uses the yaml format:
 
 ::
 
     # app/config/config.yml
-    g_hub_pomm:
+    pomm:
         databases:
             cnct_name:
                 dsn: pgsql://user:password@host:port/dbname
@@ -211,7 +211,3 @@ Another example calling a custom model function from a database named *foo*:
 Pomm also make you benefit from Postgresql's nice transaction mechanism, see the `Pomm's online documentation`_.
 
  .. _Pomm's online documentation : http://pomm.coolkeums.org/documentation
-
-
-
-
