@@ -2,24 +2,34 @@
 PommBundle a non ORM for Symfony2
 ===================================
 
-What is Pomm ?
---------------
+What is PommBundle ?
+--------------------
 
-Pomm stands for **Postgresql/PHP Object Model Manager**. It turns an existing Postgresql database to collection of coherent objects through an *Object Mapping* (OM). Pomm makes you use SQL to query the database and take advantage of the RDBMS features. 
-
-**Pomm is really Fast**
-    Pomm is a layer built on top of PDO and that's it. There is no database abstraction layer to slow down your processes: no query parser, the results are simply fed into your structures. By placing in the database processes that never change you greatly increase the performances of your website.
-
-**Pomm is Powerful**
-    Pomm makes you able to take advantage from the great features of Postgresql (functions, transactions, extra types, table inheritance ... ). Because it does not use an abstraction layer, you can write queries that do the job the most efficient way. Pomm also also benefits from Symfony2 features and PHP5.3 namespaces. 
-
-**Pomm is Efficient**
-    Unlike Propel or Doctrine, Pomm does not rely on a schema. It scans the database to generate the PHP structures it needs. This lets you use the specialized and powerful tools that exist for postgresql to design, migrate, save and deploy databases. From a code point of view, you do not have to learn a new language, the query language is pure Postgres'SQL. 
+PommBundle makes you able to benefit from `Pomm <http://pomm.coolkeums.org>` and `Postgres <http://postgresql.org>` features from your `Symfony2 <http://www.symfony.com>` development. 
 
 Installation and setup
 ----------------------
 
-To use PommBundle, you must clone the bundle_ in the *src* directory of your sf2 project and the Pomm_ API in the *vendor* directory.
+There are several ways to install PommBundle:
+
+ - Use `Composer <http://www.packagist.org>`.
+ - Clone github repo or download PommBundle's files in a directory.
+
+The composer way
+================
+
+Just add the following line to your `composer.json` file::
+
+  "require": {
+     ...
+      "pomm/pomm-bundle": "*"
+
+And launch `composer.phar install` to get the bundle in the vendor directory with the autoloader set.
+
+Download the files
+==================
+
+To use PommBundle, you can clone or download the bundle_ and the Pomm_ API in the *vendor* directory.
 
 .. _bundle: https://github.com/chanmix51/PommBundle
 .. _Pomm: https://github.com/chanmix51/Pomm
@@ -29,26 +39,6 @@ To use PommBundle, you must clone the bundle_ in the *src* directory of your sf2
   $ git clone https://github.com/chanmix51/Pomm vendor/pomm
   ...
   $ git clone https://github.com/chanmix51/PommBundle vendor/bundles/Pomm
-
-You might prefer `downloading an archive`__ of the Pomm bundle. Simply unzip it in your *src* directory.
-
-.. __: http://pomm.coolkeums.org/downloads/PommBundle.latest.tar.gz
-
-::
-
-    src$ cd src/bundles && tar xzf ~/Downloads/PommBundle.latest.tar.gz
-
-If you are using the deps file to manage your project's dependencies, you must add the following lines to it:
-
-::
-
-  [Pomm]
-    git=https://github.com/chanmix51/Pomm.git
-    target=/pomm
-  
-  [PommPommBundle]
-    git=https://github.com/chanmix51/PommBundle.git
-    target=/bundles/Pomm/PommBundle
 
 You have now to tell Symfony2 autoloader where to find the API and the files that will be generated. Fire up your text editor and add the following lines to the *app/autoload.php* file:
 
