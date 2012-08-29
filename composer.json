@@ -1,0 +1,26 @@
+{
+  "name": "pomm/pomm-bundle",
+  "type": "library",
+  "description": "The Symfony2 bundle for Postgresql Object Model Manager",
+  "keywords": ["orm", "postgresql", "database", "symfony"],
+  "homepage": "http://pomm.coolkeums.org",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Grégoire HUBERT",
+      "email": "hubert.greg@gmail.com",
+      "homepage": "http://www.coolkeums.org"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.0",
+    "pomm/pomm": "*"
+  },
+  "autoload": {
+    "psr-0": {
+      "Pomm\\PommBundle": ""
+    }
+  },
+  "target-dir": "Pomm/PommBundle",
+  "minimum-stability": "dev"
+}
