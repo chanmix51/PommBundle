@@ -20,11 +20,22 @@ The composer way
 
 Just add the following line to your `composer.json` file::
 
-  "require": {
-     ...
-      "pomm/pomm-bundle": "*"
+    {
+        "minimum-stability": "dev",
+        "require": {
+            "pomm/pomm-bundle": "dev-master"
+        }
+    }
 
-And launch `composer.phar install` to get the bundle in the vendor directory with the autoloader set.
+
+And launch `composer.phar install` to get the bundle in the vendor directory with the autoloader set. If you are using Symfony 2.0.x, you may still be using sf2 autoloader. Update your `app/autoload.php` file::
+
+    $loader->registerNamespaces(array(
+        'Symfony'          => array(__DIR__.'/../vendor/symfony/src', __DIR__.'/../vendor/bundles'),
+        ...
+
+        'Pomm'             => __DIR__.'/../vendor/pomm/pomm',
+        'Pomm\\PommBundle' => __DIR__.'/../vendor/pomm/pomm-bundle',
 
 Download the files
 ==================
@@ -36,9 +47,10 @@ To use PommBundle, you can clone or download the bundle_ and the Pomm_ API in th
 
 ::
 
-  $ git clone https://github.com/chanmix51/Pomm vendor/pomm
+  $ mkdir -p vendor/pomm/{pomm,pomm-bundle/Pomm/PommBundle}
+  $ git clone https://github.com/chanmix51/Pomm vendor/pomm/pomm
   ...
-  $ git clone https://github.com/chanmix51/PommBundle vendor/bundles/Pomm
+  $ git clone https://github.com/chanmix51/PommBundle vendor/pomm/pomm-bundle/Pomm/PommBundle
 
 You have now to tell Symfony2 autoloader where to find the API and the files that will be generated. Fire up your text editor and add the following lines to the *app/autoload.php* file:
 
