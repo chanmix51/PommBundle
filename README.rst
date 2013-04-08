@@ -7,8 +7,8 @@ What is PommBundle ?
 
 PommBundle makes you able to benefit from `Pomm <http://pomm.coolkeums.org>` and `Postgres <http://postgresql.org>` features from your `Symfony2 <http://www.symfony.com>` development. 
 
-Installation and setup
-----------------------
+Installation
+------------
 
 There are several ways to install PommBundle:
 
@@ -63,6 +63,9 @@ You have now to tell Symfony2 autoloader where to find the API and the files tha
     # This is the default namespace for the model
     # But it can be changed see the command line tools
         'Model'                          => __DIR__.'/..',
+
+Setup
+-----
 
 Let's register the PommBundle in the application kernel:
 
