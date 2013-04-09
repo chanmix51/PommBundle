@@ -65,6 +65,8 @@ EOT
         $tool = new CreateBaseMapTool($options);
 
         $tool->execute();
+
+        $this->outputStack($tool->getOutputStack(), $output);
     }
 
     protected function getToolOptions(InputInterface $input)

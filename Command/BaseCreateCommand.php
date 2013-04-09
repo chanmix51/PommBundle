@@ -2,6 +2,7 @@
 
 namespace Pomm\PommBundle\Command;
 
+use Pomm\Tools\OutputLineStack;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Symfony\Component\Console\Input\InputArgument;
@@ -41,6 +42,13 @@ abstract class BaseCreateCommand extends ContainerAwareCommand
         $options['extends'] = $input->getOption('extends') != '' ? $input->getOption('extends') : 'BaseObjectMap';
 
         return $options;
+    }
+
+    protected function outputStack(OutputLineStack $stack, OutputInterface $output)
+    {
+        foreach ($stack as $outputLine) {
+            $output->writeln((string) $outputLine);
+        }
     }
 }
 
