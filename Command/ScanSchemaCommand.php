@@ -43,7 +43,7 @@ The example above will generate all the files in /my/directory/DatabaseName/Sche
 
 The same apply with namespaces. By default the namespaces will be in the form DatabaseName\\SchemaName\\* but you can prefix this by your own prefix-namespace.
 
-  <info>app/console pomm:mapfile:scan --prefix-namespace=My\\Bundle\\Namespace</info>
+  <info>app/console pomm:mapfile:scan --prefix-namespace="My\\Bundle\\Namespace"</info>
 
 The classes will be then in the My\\Bundle\\Namespace\\DatabaseName\\SchemaName\\*.
 
