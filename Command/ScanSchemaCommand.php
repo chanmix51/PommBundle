@@ -63,5 +63,7 @@ EOT
         $tool = new ScanSchemaTool($options);
 
         $tool->execute();
+
+        $this->outputStack($tool->getOutputStack(), $output);
     }
 }
