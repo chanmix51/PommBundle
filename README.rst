@@ -215,4 +215,4 @@ Another example calling a custom model function from a database named *foo*:
 
 Pomm also make you benefit from Postgresql's nice transaction mechanism, see the `Pomm's online documentation`_.
 
- .. _Pomm's online documentation : http://pomm.coolkeums.org/documentation
+ .. _Pomm's online documentation : http://www.pomm-project.org/documentation/manual-1.2
