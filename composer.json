@@ -14,7 +14,7 @@
   ],
   "require": {
     "php": ">=5.3.0",
-    "pomm/pomm": "dev-master",
+    "pomm/pomm": "1.2.*",
     "symfony/framework-bundle": "*"
   },
   "require-dev": {
