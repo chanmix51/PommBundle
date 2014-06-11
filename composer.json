@@ -26,10 +26,5 @@
     }
   },
   "target-dir": "Pomm/PommBundle",
-  "minimum-stability": "dev",
-  "extra": {
-      "branch-alias": {
-          "dev-master": "1.2-dev"
-      }
-  }
+  "minimum-stability": "stable"
 }
