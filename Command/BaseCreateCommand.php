@@ -33,7 +33,6 @@ abstract class BaseCreateCommand extends ContainerAwareCommand
         $options = array();
 
         $options['database'] = !$input->hasOption('database') ? $this->getContainer()->get('pomm')->getDatabase() : $this->getContainer()->get('pomm')->getDatabase($input->getOption('database'));
-        $options['prefix_dir'] = $input->getOption('prefix-path');
 
         if ($input->getOption('prefix-namespace') != '') {
             $options['namespace'] = $input->getOption('prefix-namespace');
