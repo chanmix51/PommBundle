@@ -1,3 +1,11 @@
+parameters:
+    pomm.security.user.provider.class: Pomm\PommBundle\Security\User\PommUserProvider
+
 services:
     pomm:
         class: Pomm\Service
+    pomm.security.user.provider:
+        class: "%pomm.security.user.provider.class%"
+        abstract: true
+        public: false
+        arguments: [@pomm]
