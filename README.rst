@@ -99,6 +99,56 @@ The *cnct_name* here is a name for your database. You can define several databas
                 class:     My/Database    # default: Pomm\Connection\Database
                 isolation: SERIALIZABLE
 
+Now, you can configure the security layer to authenticate users:
+
+::
+
+    #app/config/security.yml
+    security:
+        providers:
+            main:
+                pomm:
+                    class: Acme\DemoBundle\Model\User
+                    property: email
+                    database: con1
+
+Your User model must implement UserInterface
+
+::
+
+    #src/Acme/DemoBundle/Model/User.php
+    namespace Acme\DemoBundle\Model;
+
+    use Pomm\Object\BaseObject;
+    use Symfony\Component\Security\Core\User\UserInterface;
+
+    class User extends BaseObject implements UserInterface
+    {
+        public function getRoles()
+        {
+            return $this->get('roles');
+        }
+
+        public function getPassword()
+        {
+            return $this->get('password');
+        }
+
+        public function getSalt()
+        {
+            return $this->get('salt');
+        }
+
+        public function getUsername()
+        {
+            return $this->get('email');
+        }
+
+        public function eraseCredentials()
+        {
+        }
+    }
+
 How to register converters
 --------------------------
 
