@@ -20,6 +20,9 @@
   "require-dev": {
     "symfony/console": "*"
   },
+  "suggest": {
+      "symfony/web-profiler-bundle": "Display queries log"
+  },
   "autoload": {
     "psr-0": {
       "Pomm\\PommBundle": ""
