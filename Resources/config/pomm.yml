@@ -1,5 +1,6 @@
 parameters:
     pomm.security.user.provider.class: Pomm\PommBundle\Security\User\PommUserProvider
+    pomm.data_collector.class: Pomm\PommBundle\DataCollector\DatabaseDataCollector
 
 services:
     pomm:
@@ -9,3 +10,9 @@ services:
         abstract: true
         public: false
         arguments: [@pomm]
+    data_collector.pomm:
+        class: "%pomm.data_collector.class%"
+        arguments:
+            - @pomm
+        tags:
+            - { name: data_collector, template: "PommBundle:Collector:db.html.twig", id: "db"}
