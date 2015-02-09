@@ -225,7 +225,7 @@ In your controllers, using the default database (the first defined):
     {
         $things = $this->get('pomm')
             ->getDatabase()
-            ->createConnection()
+            ->getConnection()
             ->getMapFor('Model\Pomm\Entity\NssBlog\Article')
             ->findAll();
 
@@ -240,7 +240,7 @@ You might want to filter things with some conditions:
     {
         $things = $this->get('pomm')
             ->getDatabase()
-            ->createConnection()
+            ->getConnection()
             ->getMapFor('Model\Pomm\Entity\NssBlog\Article')
             ->findWhere('active AND created_at > ?', array(strtotime('one month ago')));
 
@@ -255,7 +255,7 @@ Another example calling a custom model function from a database named *foo*:
     {
         $stuff = $this->get('pomm')
             ->getDatabase('foo')
-            ->createConnection()
+            ->getConnection()
             ->getMapFor('Model\Pomm\Entity\AdminUser\Group')
             ->myModelMethod();
 
