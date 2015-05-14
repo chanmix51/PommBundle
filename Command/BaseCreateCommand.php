@@ -50,8 +50,7 @@ abstract class BaseCreateCommand extends ContainerAwareCommand
             $options['output_level'] = $outputLevel != ''
                 ? constant('\Pomm\Tools\OutputLine::LEVEL_'.strtoupper($outputLevel))
                 : OutputLine::LEVEL_INFO;
-        }
-        else {
+        } else {
             throw new \Exception(
                 "Invalid log output level: {$input->getOption('output-level')}"
                 ."\nAvailable levels: DEBUG, INFO (default), WARNING, ERROR, CRITICAL"
@@ -68,4 +67,3 @@ abstract class BaseCreateCommand extends ContainerAwareCommand
         }
     }
 }
-

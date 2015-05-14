@@ -14,7 +14,7 @@ class DatabaseDataCollector extends DataCollector implements FilterInterface
 
     public function __construct(\Pomm\Service $pomm)
     {
-        $this->queries = [];
+        $this->queries = array();
 
         foreach ($pomm->getDatabases() as $database) {
             $database->getConnection()
@@ -27,11 +27,11 @@ class DatabaseDataCollector extends DataCollector implements FilterInterface
         $start = microtime();
         $stmt = $chain->executeNext();
         $end = microtime();
-        $this->queries[] = [
+        $this->queries[] = array(
             'sql' => $chain->query->getSql(),
             'values' => $chain->values,
             'time' => $end - $start,
-        ];
+        );
 
         return $stmt;
     }
