@@ -2,10 +2,16 @@
 PommBundle a non ORM for Symfony2
 ===================================
 
-What is PommBundle ?
---------------------
+What is PommBundle (for Pomm 1.x Only)?
+---------------------------------------
 
 PommBundle makes you able to benefit from `Pomm <http://pomm.coolkeums.org>` and `Postgres <http://postgresql.org>` features from your `Symfony2 <http://www.symfony.com>` development. 
+
+Note::
+
+    This bundle is only useful if you are using old version of Pomm 1.x. For other later versions please
+    use the other bundle `pomm-project/pomm-bundle`.
+
 
 Installation
 ------------
