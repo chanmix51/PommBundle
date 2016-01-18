@@ -9,10 +9,9 @@ services:
         class: "%pomm.security.user.provider.class%"
         abstract: true
         public: false
-        arguments: [@pomm]
+        arguments: ["@pomm"]
     data_collector.pomm:
         class: "%pomm.data_collector.class%"
-        arguments:
-            - @pomm
+        arguments: ["@pomm"]
         tags:
             - { name: data_collector, template: "PommBundle:Collector:db.html.twig", id: "db"}
